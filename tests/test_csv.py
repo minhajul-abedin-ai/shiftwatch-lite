@@ -26,7 +26,7 @@ class CsvInputTests(unittest.TestCase):
 
     def test_missing_value_has_line_number(self):
         with self.assertRaisesRegex(ValueError, r"input.csv:3"):
-            read_column(self.write("value\n1\n\n"), "value")
+            read_column(self.write("value\n1\n \n"), "value")
 
     def test_non_numeric_has_line_number(self):
         with self.assertRaisesRegex(ValueError, r"input.csv:3"):
