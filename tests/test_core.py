@@ -23,6 +23,17 @@ class DriftTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 drift_report(bad, [1])
 
+    def test_oversized_integer_observations_raise_value_error(self):
+        huge = 10 ** 400
+        for reference, current in (([huge], [1]), ([1], [huge])):
+            with self.subTest(reference_is_huge=reference[0] == huge):
+                with self.assertRaisesRegex(ValueError, 'finite numeric values'):
+                    drift_report(reference, current)
+
+    def test_large_representable_integer_is_accepted(self):
+        report = drift_report([10 ** 100, 10 ** 101], [10 ** 100, 10 ** 101], n_bins=2)
+        self.assertAlmostEqual(report['psi'], 0.0)
+
     def test_invalid_probability(self):
         with self.assertRaises(ValueError):
             psi([0,0],[1,0])
