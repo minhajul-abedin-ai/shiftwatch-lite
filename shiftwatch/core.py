@@ -11,9 +11,15 @@ def _clean(values):
         values = list(values)
     out = []
     for x in values:
-        if isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x):
+        if isinstance(x, bool) or not isinstance(x, (int, float)):
             raise ValueError('All observations must be finite numeric values (excluding booleans)')
-        out.append(float(x))
+        try:
+            value = float(x)
+        except (OverflowError, ValueError) as exc:
+            raise ValueError('All observations must be finite numeric values (excluding booleans)') from exc
+        if not math.isfinite(value):
+            raise ValueError('All observations must be finite numeric values (excluding booleans)')
+        out.append(value)
     if not out:
         raise ValueError('At least one observation is required')
     return out
